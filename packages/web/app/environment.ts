@@ -103,6 +103,10 @@ const SentryConfigSchema = zod.union([
   }),
 ]);
 
+const OpenTelemetryConfigSchema = zod.object({
+  OTLP_HTTP_EXPORTER_URL: zod.union([zod.void(), zod.string().url()]),
+});
+
 const MigrationsSchema = zod.object({
   MEMBER_ROLES_DEADLINE: emptyString(
     zod
@@ -118,6 +122,8 @@ const configs = {
   base: BaseSchema.safeParse(process.env),
   // eslint-disable-next-line no-process-env
   integrationSlack: IntegrationSlackSchema.safeParse(process.env),
+  // eslint-disable-next-line no-process-env
+  tracing: OpenTelemetryConfigSchema.safeParse(process.env),
   // eslint-disable-next-line no-process-env
   sentry: SentryConfigSchema.safeParse(process.env),
   // eslint-disable-next-line no-process-env
@@ -161,6 +167,7 @@ const authGoogle = extractConfig(configs.authGoogle);
 const authOkta = extractConfig(configs.authOkta);
 const authOktaMultiTenant = extractConfig(configs.authOktaMultiTenant);
 const migrations = extractConfig(configs.migrations);
+const tracing = extractConfig(configs.tracing);
 
 const config = {
   release: base.RELEASE ?? 'local',
@@ -222,6 +229,11 @@ const config = {
   migrations: {
     member_roles_deadline: migrations.MEMBER_ROLES_DEADLINE ?? null,
   },
+  tracing: tracing.OTLP_HTTP_EXPORTER_URL
+    ? {
+        url: tracing.OTLP_HTTP_EXPORTER_URL,
+      }
+    : null,
 } as const;
 
 declare global {

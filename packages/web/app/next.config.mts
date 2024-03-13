@@ -12,6 +12,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 export default withBundleAnalyzer({
+  experimental: {
+    instrumentationHook: true,
+  },
   productionBrowserSourceMaps: true,
   poweredByHeader: false,
   eslint: {

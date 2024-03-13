@@ -1,4 +1,5 @@
 import * as pulumi from '@pulumi/pulumi';
+import { Observability } from '../services/observability';
 import { serviceLocalEndpoint } from '../utils/local-endpoint';
 import { ServiceSecret } from '../utils/secrets';
 import { ServiceDeployment } from '../utils/service-deployment';
@@ -22,6 +23,7 @@ class AppOAuthSecret extends ServiceSecret<{
 }> {}
 
 export function deployApp({
+  observability,
   graphql,
   dbMigrations,
   image,
@@ -35,6 +37,7 @@ export function deployApp({
   sentry,
   environment,
 }: {
+  observability: Observability;
   environment: Environment;
   image: string;
   graphql: GraphQL;
@@ -96,6 +99,10 @@ export function deployApp({
         AUTH_REQUIRE_EMAIL_VERIFICATION: '1',
         AUTH_ORGANIZATION_OIDC: '1',
         MEMBER_ROLES_DEADLINE: appEnv.MEMBER_ROLES_DEADLINE,
+        OTLP_HTTP_EXPORTER_URL:
+          observability.enabled && observability.tracingEndpoint
+            ? observability.tracingEndpoint
+            : '',
       },
       port: 3000,
     },

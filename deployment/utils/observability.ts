@@ -34,9 +34,10 @@ export class Observability {
   ) {}
 
   deploy() {
-    const ns = new k8s.core.v1.Namespace('observability', {
+    const nsName = 'observability';
+    const ns = new k8s.core.v1.Namespace(nsName, {
       metadata: {
-        name: 'observability',
+        name: nsName,
       },
     });
 
@@ -238,11 +239,16 @@ export class Observability {
     };
 
     // We are using otel-collector to scrape metrics and collect traces from Pods
-    new k8s.helm.v3.Chart('metrics', {
+    const otlpCollector = new k8s.helm.v3.Chart('metrics', {
       ...OTLP_COLLECTOR_CHART,
       namespace: ns.metadata.name,
       values: chartValues,
     });
+
+    let otlpCollectorService = otlpCollector.getResource(
+      'v1/Service',
+      `${nsName}/metrics-opentelemetry-collector`,
+    );
 
     // https://vector.dev/docs/reference/configuration/
     const vectorValues: VectorValues = {
@@ -330,5 +336,9 @@ export class Observability {
         dependsOn: [ns],
       },
     );
+
+    return {
+      otlpCollectorService,
+    };
   }
 }
