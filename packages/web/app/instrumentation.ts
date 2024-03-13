@@ -10,7 +10,6 @@ export function register() {
     registerOTel({
       serviceName: 'app',
       traceExporter: exporter,
-      
     });
   } else {
     console.warn('OpenTelemetry endpoint is missing, ignoring');
