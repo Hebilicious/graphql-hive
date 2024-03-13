@@ -1,5 +1,5 @@
 import * as k8s from '@pulumi/kubernetes';
-import { Output } from '@pulumi/pulumi';
+import { interpolate, Output } from '@pulumi/pulumi';
 import { ContourValues } from './contour.types';
 import { helmChart } from './helm';
 
@@ -116,12 +116,34 @@ export class Proxy {
     return this;
   }
 
-  deployProxy(options: { replicas?: number }) {
+  deployProxy(options: { replicas?: number; tracing?: boolean }) {
     const ns = new k8s.core.v1.Namespace('contour', {
       metadata: {
         name: 'contour',
       },
     });
+
+    let tracingExtensionService: k8s.apiextensions.CustomResource | undefined;
+
+    if (options.tracing) {
+      tracingExtensionService = new k8s.apiextensions.CustomResource(`httpproxy-tracing`, {
+        apiVersion: 'projectcontour.io/v1alpha1',
+        kind: 'ExtensionService',
+        metadata: {
+          name: 'otel-collector',
+          namespace: 'observability',
+        },
+        spec: {
+          protocol: 'h2c',
+          services: [
+            {
+              name: 'metrics-opentelemetry-collector',
+              port: 4317,
+            },
+          ],
+        },
+      });
+    }
 
     const chartValues: ContourValues = {
       configInline: {
@@ -145,6 +167,15 @@ export class Proxy {
           'user_agent',
           'x_forwarded_for',
         ],
+        tracing:
+          options.tracing && tracingExtensionService
+            ? {
+                includePodDetail: true,
+                extensionService: interpolate`${tracingExtensionService.metadata.namespace}/${tracingExtensionService.metadata.name}`,
+                serviceName: 'contour',
+                customTags: [],
+              }
+            : undefined,
       },
       contour: {
         podAnnotations: {

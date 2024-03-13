@@ -22,6 +22,11 @@ export function deployMetrics(config: { envName: string }) {
       username: observabilityConfig.require('lokiUsername'),
       password: observabilityConfig.requireSecret('lokiPassword'),
     },
+    tempo: {
+      endpoint: observabilityConfig.require('tempoEndpoint'),
+      username: observabilityConfig.require('tempoUsername'),
+      password: observabilityConfig.requireSecret('tempoPassword'),
+    },
   });
 
   return {
