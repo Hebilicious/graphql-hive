@@ -108,6 +108,7 @@ async function buildWithNext(cwd: string, additionalRequire: string | null) {
       },
     }),
     fs.copy(join(cwd, 'public'), join(cwd, 'dist/public')),
+    fs.copy(join(cwd, 'next.config.mjs'), join(cwd, 'dist/next.config.mjs')),
     fs.writeFile(
       join(cwd, 'dist/index.js'),
       template.replace(
