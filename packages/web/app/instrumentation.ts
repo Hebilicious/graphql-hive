@@ -6,10 +6,11 @@ export function register() {
     const { url } = globalThis['__backend_env'].tracing;
     console.info(`🔎 Registering OpenTelemetry with exporter URL: ${url}`);
     const exporter = new OTLPTraceExporter({ url });
+
     registerOTel({
-      serviceName: 'api-proxy',
+      serviceName: 'app',
       traceExporter: exporter,
-      propagators: ['tracecontext'],
+      
     });
   } else {
     console.warn('OpenTelemetry endpoint is missing, ignoring');
