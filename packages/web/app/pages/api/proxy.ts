@@ -10,7 +10,7 @@ async function graphql(req: NextApiRequest, res: NextApiResponse) {
   const logger = getLogger(req);
   const url = env.graphqlEndpoint;
 
-  const { traceparent, tracecontext } = req.headers;
+  const { traceparent, tracestate } = req.headers;
   const requestIdHeader = req.headers['x-request-id'];
   const requestId = Array.isArray(requestIdHeader)
     ? requestIdHeader[0]
@@ -30,7 +30,7 @@ async function graphql(req: NextApiRequest, res: NextApiResponse) {
         'x-use-proxy': '/api/proxy',
         'graphql-client-version': env.release,
         traceparent: traceparent ?? '',
-        tracecontext: tracecontext ?? '',
+        tracestate: tracestate ?? '',
       },
       method: 'GET',
     } as any);
@@ -69,7 +69,7 @@ async function graphql(req: NextApiRequest, res: NextApiResponse) {
         'graphql-client-name': 'Hive App',
         'graphql-client-version': env.release,
         traceparent: traceparent ?? '',
-        tracecontext: tracecontext ?? '',
+        tracestate: tracestate ?? '',
       },
       method: 'POST',
       body: JSON.stringify(req.body || {}),
