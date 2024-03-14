@@ -31,6 +31,7 @@
       ],
 
       "@hive/service-common": ["./packages/services/service-common/src/index.ts"],
+      "@hive/service-common/tracing": ["./packages/services/service-common/src/tracing.ts"],
       "@hive/cdn-script/artifact-handler": [
         "./packages/services/cdn-worker/src/artifact-handler.ts"
       ],

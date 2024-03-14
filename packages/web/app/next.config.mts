@@ -12,8 +12,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 export default withBundleAnalyzer({
+  transpilePackages: ['@hive/service-common/tracing'],
   experimental: {
-    instrumentationHook: true,
+    instrumentationHook: false,
   },
   productionBrowserSourceMaps: true,
   poweredByHeader: false,

@@ -2,11 +2,30 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import hyperid from 'hyperid';
 import { env } from '@/env/backend';
 import { extractAccessTokenFromRequest } from '@/lib/api/extract-access-token-from-request';
+import { wrapWithTracing } from '@/lib/api/tracing-wrapper';
 import { getLogger } from '@/server-logger';
+import { configureTracing, type TracingInstance } from '@hive/service-common/tracing';
 import { captureException } from '@sentry/nextjs';
 
+let tracing: TracingInstance | undefined;
+
+if (globalThis['__backend_env'].tracing) {
+  tracing = configureTracing({
+    collectorEndpoint: globalThis['__backend_env'].tracing.url,
+    serviceName: 'app-proxy',
+    instrumentations: {},
+  });
+
+  tracing.sdk.start();
+}
+
 const reqIdGenerate = hyperid({ fixedLength: true });
+
 async function graphql(req: NextApiRequest, res: NextApiResponse) {
+  const t = {};
+  tracing?.propagation.inject(tracing?.context.active(), t);
+  console.log('tracing:', t);
+
   const logger = getLogger(req);
   const url = env.graphqlEndpoint;
 
@@ -99,7 +118,7 @@ async function graphql(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default graphql;
+export default wrapWithTracing(tracing, graphql);
 
 export const config = {
   api: {
