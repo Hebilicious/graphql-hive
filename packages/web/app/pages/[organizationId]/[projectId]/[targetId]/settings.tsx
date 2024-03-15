@@ -22,6 +22,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Subtitle, Title } from '@/components/ui/page';
 import { QueryError } from '@/components/ui/query-error';
+import { NavState, SettingLayout } from '@/components/ui/settings-nav';
 import {
   DocsLink,
   Input,
@@ -1006,6 +1007,8 @@ function TargetSettingsContent() {
     return <QueryError error={query.error} />;
   }
 
+  const [selectedTab, setSelectedTab] = useState<NavState>('General');
+
   return (
     <TargetLayout
       page={Page.Settings}
@@ -1020,38 +1023,50 @@ function TargetSettingsContent() {
         <Subtitle>Manage your target settings.</Subtitle>
       </div>
       {currentOrganization && currentProject && currentTarget && organizationForSettings ? (
-        <div className="flex flex-col gap-y-4">
-          <TargetName
-            targetName={currentTarget.name}
-            targetId={currentTarget.cleanId}
-            projectId={currentProject.cleanId}
-            organizationId={currentOrganization.cleanId}
-          />
-          <GraphQLEndpointUrl
-            targetId={currentTarget.cleanId}
-            projectId={currentProject.cleanId}
-            organizationId={currentOrganization.cleanId}
-            graphqlEndpointUrl={currentTarget.graphqlEndpointUrl ?? null}
-          />
-          {canAccessTokens && <RegistryAccessTokens me={organizationForSettings.me} />}
-          {canAccessTokens && <CDNAccessTokens me={organizationForSettings.me} />}
-          {currentProject.type === ProjectType.Federation && <SchemaContracts />}
-          <ConditionalBreakingChanges />
-          <ExtendBaseSchema baseSchema={targetForSettings?.baseSchema ?? ''} />
-          {canDelete && (
-            <TargetDelete
-              targetId={currentTarget.cleanId}
-              projectId={currentProject.cleanId}
-              organizationId={currentOrganization.cleanId}
-            />
+        <SettingLayout selectedTab={selectedTab} setSelectedTab={setSelectedTab}>
+          {selectedTab === 'General' && (
+            <div className="mb-5 flex flex-col gap-y-4">
+              <TargetName
+                targetName={currentTarget.name}
+                organizationId={router.organizationId}
+                projectId={router.projectId}
+                targetId={router.targetId}
+              />
+              <GraphQLEndpointUrl
+                targetId={currentTarget.cleanId}
+                projectId={currentProject.cleanId}
+                organizationId={currentOrganization.cleanId}
+                graphqlEndpointUrl={currentTarget.graphqlEndpointUrl ?? null}
+              />
+              {canDelete && (
+                <TargetDelete
+                  targetId={currentTarget.cleanId}
+                  projectId={currentProject.cleanId}
+                  organizationId={currentOrganization.cleanId}
+                />
+              )}
+              {currentProject.type === ProjectType.Federation && <SchemaContracts />}
+            </div>
           )}
-        </div>
+          {selectedTab === 'Token' && canAccessTokens && (
+            <div className="mb-5 flex flex-col gap-y-4">
+              <RegistryAccessTokens me={organizationForSettings.me} />
+              <CDNAccessTokens me={organizationForSettings.me} />
+            </div>
+          )}
+          {selectedTab === 'Schema' && (
+            <div className="mb-5 flex flex-col gap-y-4">
+              <ConditionalBreakingChanges />
+              <ExtendBaseSchema baseSchema={targetForSettings?.baseSchema ?? ''} />
+            </div>
+          )}
+        </SettingLayout>
       ) : null}
     </TargetLayout>
   );
 }
 
-function SettingsPage(): ReactElement {
+function TestPage(): ReactElement {
   return (
     <>
       <MetaTitle title="Settings" />
@@ -1062,4 +1077,4 @@ function SettingsPage(): ReactElement {
 
 export const getServerSideProps = withSessionProtection();
 
-export default authenticated(SettingsPage);
+export default authenticated(TestPage);
