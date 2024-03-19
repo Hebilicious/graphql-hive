@@ -16,7 +16,6 @@ import { EmptyList, MetaTitle } from '@/components/v2';
 import { graphql } from '@/gql';
 import { useRouteSelector } from '@/lib/hooks';
 import { useDateRangeController } from '@/lib/hooks/use-date-range-controller';
-import { withSessionProtection } from '@/lib/supertokens/guard';
 
 const GraphQLOperationBody_GetOperationBodyQuery = graphql(`
   query GraphQLOperationBody_GetOperationBodyQuery($selector: OperationBodyByHashInput!) {
@@ -241,7 +240,5 @@ function OperationInsightsPage(): ReactElement {
     </>
   );
 }
-
-export const getServerSideProps = withSessionProtection();
 
 export default authenticated(OperationInsightsPage);

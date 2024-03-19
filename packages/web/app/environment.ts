@@ -24,11 +24,8 @@ const BaseSchema = zod.object({
   NODE_ENV: zod.string(),
   ENVIRONMENT: zod.string(),
   APP_BASE_URL: zod.string().url(),
-  GRAPHQL_ENDPOINT: zod.string().url(),
+  GRAPHQL_PUBLIC_ENDPOINT: zod.string().url(),
   SERVER_ENDPOINT: zod.string().url(),
-  EMAILS_ENDPOINT: zod.string().url(),
-  SUPERTOKENS_CONNECTION_URI: zod.string().url(),
-  SUPERTOKENS_API_KEY: zod.string(),
   INTEGRATION_GITHUB_APP_NAME: emptyString(zod.string().optional()),
   GA_TRACKING_ID: emptyString(zod.string().optional()),
   DOCS_URL: emptyString(zod.string().url().optional()),
@@ -54,40 +51,18 @@ const IntegrationSlackSchema = zod.union([
   }),
 ]);
 
-const AuthGitHubConfigSchema = zod.union([
-  zod.object({
-    AUTH_GITHUB: zod.union([zod.void(), zod.literal('0'), zod.literal('')]),
-  }),
-  zod.object({
-    AUTH_GITHUB: zod.literal('1'),
-    AUTH_GITHUB_CLIENT_ID: zod.string(),
-    AUTH_GITHUB_CLIENT_SECRET: zod.string(),
-  }),
-]);
+const AuthGitHubConfigSchema = zod.object({
+  AUTH_GITHUB: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
+});
 
-const AuthGoogleConfigSchema = zod.union([
-  zod.object({
-    AUTH_GOOGLE: zod.union([zod.void(), zod.literal('0'), zod.literal('')]),
-  }),
-  zod.object({
-    AUTH_GOOGLE: zod.literal('1'),
-    AUTH_GOOGLE_CLIENT_ID: zod.string(),
-    AUTH_GOOGLE_CLIENT_SECRET: zod.string(),
-  }),
-]);
+const AuthGoogleConfigSchema = zod.object({
+  AUTH_GOOGLE: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
+});
 
-const AuthOktaConfigSchema = zod.union([
-  zod.object({
-    AUTH_OKTA: zod.union([zod.void(), zod.literal('0')]),
-  }),
-  zod.object({
-    AUTH_OKTA: zod.literal('1'),
-    AUTH_OKTA_HIDDEN: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
-    AUTH_OKTA_ENDPOINT: zod.string().url(),
-    AUTH_OKTA_CLIENT_ID: zod.string(),
-    AUTH_OKTA_CLIENT_SECRET: zod.string(),
-  }),
-]);
+const AuthOktaConfigSchema = zod.object({
+  AUTH_OKTA: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
+  AUTH_OKTA_HIDDEN: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
+});
 
 const AuthOktaMultiTenantSchema = zod.object({
   AUTH_ORGANIZATION_OIDC: emptyString(zod.union([zod.literal('1'), zod.literal('0')]).optional()),
@@ -113,23 +88,18 @@ const MigrationsSchema = zod.object({
   ),
 });
 
+// eslint-disable-next-line no-process-env
+const processEnv = process.env;
+
 const configs = {
-  // eslint-disable-next-line no-process-env
-  base: BaseSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  integrationSlack: IntegrationSlackSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  sentry: SentryConfigSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  authGithub: AuthGitHubConfigSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  authGoogle: AuthGoogleConfigSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  authOkta: AuthOktaConfigSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  authOktaMultiTenant: AuthOktaMultiTenantSchema.safeParse(process.env),
-  // eslint-disable-next-line no-process-env
-  migrations: MigrationsSchema.safeParse(process.env),
+  base: BaseSchema.safeParse(processEnv),
+  integrationSlack: IntegrationSlackSchema.safeParse(processEnv),
+  sentry: SentryConfigSchema.safeParse(processEnv),
+  authGithub: AuthGitHubConfigSchema.safeParse(processEnv),
+  authGoogle: AuthGoogleConfigSchema.safeParse(processEnv),
+  authOkta: AuthOktaConfigSchema.safeParse(processEnv),
+  authOktaMultiTenant: AuthOktaMultiTenantSchema.safeParse(processEnv),
+  migrations: MigrationsSchema.safeParse(processEnv),
 };
 
 const environmentErrors: Array<string> = [];
@@ -167,13 +137,7 @@ const config = {
   nodeEnv: base.NODE_ENV,
   environment: base.ENVIRONMENT,
   appBaseUrl: base.APP_BASE_URL.replace(/\/$/, ''),
-  graphqlEndpoint: base.GRAPHQL_ENDPOINT,
-  serverEndpoint: base.SERVER_ENDPOINT,
-  emailsEndpoint: base.EMAILS_ENDPOINT,
-  supertokens: {
-    connectionUri: base.SUPERTOKENS_CONNECTION_URI,
-    apiKey: base.SUPERTOKENS_API_KEY,
-  },
+  graphqlEndpoint: base.GRAPHQL_PUBLIC_ENDPOINT,
   slack:
     integrationSlack.INTEGRATION_SLACK === '1'
       ? {
@@ -187,29 +151,16 @@ const config = {
   },
   docsUrl: base.DOCS_URL,
   auth: {
-    github:
-      authGithub.AUTH_GITHUB === '1'
-        ? {
-            clientId: authGithub.AUTH_GITHUB_CLIENT_ID,
-            clientSecret: authGithub.AUTH_GITHUB_CLIENT_SECRET,
-          }
-        : null,
-    google:
-      authGoogle.AUTH_GOOGLE === '1'
-        ? {
-            clientId: authGoogle.AUTH_GOOGLE_CLIENT_ID,
-            clientSecret: authGoogle.AUTH_GOOGLE_CLIENT_SECRET,
-          }
-        : null,
-    okta:
-      authOkta.AUTH_OKTA === '1'
-        ? {
-            endpoint: authOkta.AUTH_OKTA_ENDPOINT,
-            hidden: authOkta.AUTH_OKTA_HIDDEN === '1',
-            clientId: authOkta.AUTH_OKTA_CLIENT_ID,
-            clientSecret: authOkta.AUTH_OKTA_CLIENT_SECRET,
-          }
-        : null,
+    github: {
+      enabled: authGithub.AUTH_GITHUB === '1',
+    },
+    google: {
+      enabled: authGoogle.AUTH_GOOGLE === '1',
+    },
+    okta: {
+      enabled: authOkta.AUTH_OKTA === '1',
+      hidden: authOkta.AUTH_OKTA_HIDDEN === '1',
+    },
     organizationOIDC: authOktaMultiTenant.AUTH_ORGANIZATION_OIDC === '1',
     requireEmailVerification: base.AUTH_REQUIRE_EMAIL_VERIFICATION === '1',
   },

@@ -9,6 +9,7 @@ import { ConnectSchemaModal } from '@/components/v2/modals';
 import { FragmentType, graphql, useFragment } from '@/gql';
 import { canAccessTarget, TargetAccessScope, useTargetAccess } from '@/lib/access/target';
 import { useRouteSelector, useToggle } from '@/lib/hooks';
+import { useLastVisitedOrganizationWriter } from '@/lib/last-visited-org';
 import { cn } from '@/lib/utils';
 import { ProjectMigrationToast } from '../project/migration-toast';
 
@@ -130,6 +131,8 @@ export const TargetLayout = ({
     member: currentOrganization?.me ?? null,
     redirect: true,
   });
+
+  useLastVisitedOrganizationWriter(currentOrganization?.cleanId);
 
   const canAccessSchema = canAccessTarget(
     TargetAccessScope.RegistryRead,

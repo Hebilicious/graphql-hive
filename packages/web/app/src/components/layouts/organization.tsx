@@ -15,6 +15,7 @@ import {
 } from '@/lib/access/organization';
 import { getIsStripeEnabled } from '@/lib/billing/stripe-public-key';
 import { useRouteSelector, useToggle } from '@/lib/hooks';
+import { useLastVisitedOrganizationWriter } from '@/lib/last-visited-org';
 import { ProPlanBilling } from '../organization/billing/ProPlanBillingWarm';
 import { RateLimitWarn } from '../organization/billing/RateLimitWarn';
 
@@ -85,6 +86,8 @@ export function OrganizationLayout({
     scope: OrganizationAccessScope.Read,
     redirect: true,
   });
+
+  useLastVisitedOrganizationWriter(currentOrganization?.cleanId);
 
   const meInCurrentOrg = currentOrganization?.me;
   const me = useFragment(OrganizationLayout_MeFragment, props.me);

@@ -12,12 +12,13 @@ import { env as backendEnv } from '@/env/backend';
  */
 export const env = {
   appBaseUrl: backendEnv.appBaseUrl,
+  graphqlEndpoint: backendEnv.graphqlEndpoint,
   docsUrl: backendEnv.docsUrl,
   stripePublicKey: backendEnv?.stripePublicKey,
   auth: {
-    github: !!backendEnv.auth.github,
-    google: !!backendEnv.auth.google,
-    okta: backendEnv.auth.okta ? { hidden: backendEnv.auth.okta.hidden } : null,
+    github: backendEnv.auth.github.enabled,
+    google: backendEnv.auth.google.enabled,
+    okta: backendEnv.auth.okta.enabled ? { hidden: backendEnv.auth.okta.hidden } : null,
     requireEmailVerification: backendEnv.auth.requireEmailVerification,
     organizationOIDC: backendEnv.auth.organizationOIDC,
   },

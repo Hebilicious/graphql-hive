@@ -2,8 +2,15 @@
 import * as fs from 'fs';
 import got from 'got';
 import { DocumentNode, GraphQLError, stripIgnoredCharacters } from 'graphql';
+import {
+  errorHandler as supertokensErrorHandler,
+  plugin as supertokensFastifyPlugin,
+} from 'supertokens-node/framework/fastify/index.js';
+import cors from '@fastify/cors';
+import type { FastifyCorsOptions, FastifyCorsOptionsDelegateCallback } from '@fastify/cors';
 import 'reflect-metadata';
 import { hostname } from 'os';
+import formDataPlugin from '@fastify/formbody';
 import { createRegistry, createTaskRunner, CryptoProvider, LogFn, Logger } from '@hive/api';
 import { createArtifactRequestHandler } from '@hive/cdn-script/artifact-handler';
 import { ArtifactStorageReader } from '@hive/cdn-script/artifact-storage-reader';
@@ -36,6 +43,7 @@ import { asyncStorage } from './async-storage';
 import { env } from './environment';
 import { graphqlHandler } from './graphql-handler';
 import { clickHouseElapsedDuration, clickHouseReadDuration } from './metrics';
+import { initSupertokens } from './supertokens';
 
 export async function main() {
   init({
@@ -69,6 +77,7 @@ export async function main() {
   const server = await createServer({
     name: 'graphql-api',
     tracing: true,
+    cors: false,
     log: {
       level: env.log.level,
       requests: env.log.requests,
@@ -92,6 +101,29 @@ export async function main() {
       });
     },
   );
+
+  server.setErrorHandler(supertokensErrorHandler());
+  await server.register(cors, (_: unknown): FastifyCorsOptionsDelegateCallback => {
+    return (req, callback) => {
+      const corsOptions: FastifyCorsOptions = {
+        // This is NOT recommended for production as it enables reflection exploits
+        origin: 'http://localhost:3000',
+        credentials: true,
+        methods: ['GET', 'POST'],
+        // allowedHeaders: ['Content-Type', ...supertokens.getAllCORSHeaders()],
+      };
+
+      // // do not include CORS headers for requests from localhost
+      // if (/^localhost$/m.test(req.headers.origin)) {
+      //   corsOptions.origin = false;
+      // }
+
+      // callback expects two parameters: error and options
+      callback(null, corsOptions);
+    };
+  });
+  await server.register(formDataPlugin);
+  await server.register(supertokensFastifyPlugin);
 
   const storage = await createPostgreSQLStorage(createConnectionString(env.postgres), 10);
 
@@ -359,17 +391,22 @@ export async function main() {
 
     const crypto = new CryptoProvider(env.encryptionSecret);
 
+    initSupertokens({
+      storage,
+      crypto,
+    });
+
     await registerTRPC(server, {
       router: internalApiRouter,
       createContext({ req }) {
-        return createContext({ storage, crypto, req });
+        return createContext({ storage, crypto });
       },
     });
 
     server.route({
       method: ['GET', 'HEAD'],
       url: '/_health',
-      async handler(req, res) {
+      async handler(_, res) {
         res.status(200).send(); // eslint-disable-line @typescript-eslint/no-floating-promises -- false positive, FastifyReply.then returns void
       },
     });

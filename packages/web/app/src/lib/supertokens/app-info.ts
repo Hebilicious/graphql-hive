@@ -1,14 +1,14 @@
 import { env } from '@/env/frontend';
 
 export const appInfo = () => {
-  const { appBaseUrl } = env;
+  const { appBaseUrl, graphqlEndpoint } = env;
 
   return {
     // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
     appName: 'GraphQL Hive',
-    apiDomain: appBaseUrl,
+    apiDomain: new URL(graphqlEndpoint).origin,
     websiteDomain: appBaseUrl,
-    apiBasePath: '/api/auth',
+    apiBasePath: '/auth',
     websiteBasePath: '/auth',
   };
 };

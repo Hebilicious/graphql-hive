@@ -37,7 +37,6 @@ import { FragmentType, graphql, useFragment } from '@/gql';
 import { CriticalityLevel } from '@/gql/graphql';
 import { ProjectType } from '@/graphql';
 import { useRouteSelector } from '@/lib/hooks';
-import { withSessionProtection } from '@/lib/supertokens/guard';
 import { cn } from '@/lib/utils';
 import {
   CheckIcon,
@@ -1491,7 +1490,5 @@ function ChecksPage() {
     </>
   );
 }
-
-export const getServerSideProps = withSessionProtection();
 
 export default authenticated(ChecksPage);

@@ -2,23 +2,20 @@ import { CryptoProvider } from 'packages/services/api/src/modules/shared/provide
 import { z } from 'zod';
 import type { Storage } from '@hive/api';
 import { OrganizationAccessScope, ProjectAccessScope, TargetAccessScope } from '@hive/api';
-import { FastifyRequest, handleTRPCError } from '@hive/service-common';
+import { handleTRPCError } from '@hive/service-common';
 import type { inferAsyncReturnType } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 
 export async function createContext({
   storage,
   crypto,
-  req,
 }: {
   storage: Storage;
   crypto: CryptoProvider;
-  req: FastifyRequest;
 }) {
   return {
     storage,
     crypto,
-    req,
   };
 }
 
@@ -144,5 +141,7 @@ export const internalApiRouter = t.router({
       };
     }),
 });
+
+export const createInternalApiCaller = t.createCallerFactory(internalApiRouter);
 
 export type InternalApi = typeof internalApiRouter;

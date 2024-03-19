@@ -28,7 +28,6 @@ import { ProjectType } from '@/graphql';
 import { canAccessProject, ProjectAccessScope, useProjectAccess } from '@/lib/access/project';
 import { getDocsUrl } from '@/lib/docs-url';
 import { useNotifications, useRouteSelector, useToggle } from '@/lib/hooks';
-import { withSessionProtection } from '@/lib/supertokens/guard';
 
 const GithubIntegration_GithubIntegrationDetailsQuery = graphql(`
   query getGitHubIntegrationDetails($selector: OrganizationSelectorInput!) {
@@ -413,7 +412,5 @@ function SettingsPage() {
     </>
   );
 }
-
-export const getServerSideProps = withSessionProtection();
 
 export default authenticated(SettingsPage);

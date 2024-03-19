@@ -19,7 +19,6 @@ import { DiffIcon } from '@/components/v2/icon';
 import { FragmentType, graphql, useFragment } from '@/gql';
 import { CriticalityLevel, ProjectType } from '@/graphql';
 import { useRouteSelector } from '@/lib/hooks/use-route-selector';
-import { withSessionProtection } from '@/lib/supertokens/guard';
 import { cn } from '@/lib/utils';
 import {
   CheckCircledIcon,
@@ -883,7 +882,5 @@ function HistoryPage(): ReactElement {
     </>
   );
 }
-
-export const getServerSideProps = withSessionProtection();
 
 export default authenticated(HistoryPage);
