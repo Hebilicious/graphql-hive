@@ -58,7 +58,7 @@ export const getStaticProps: GetStaticProps<{ changelogs: Changelog[] }> = async
   const changelogs: Changelog[] = [];
 
   for (const filename of filenames) {
-    if (filename.endsWith('.json') || filename.endsWith('index.mdx')) {
+    if (filename.endsWith('.json') || filename.endsWith('index.mdx') || filename.endsWith('.ts')) {
       continue;
     }
 
@@ -81,3 +81,4 @@ export const getStaticProps: GetStaticProps<{ changelogs: Changelog[] }> = async
 
   return { props: { changelogs } };
 };
+
