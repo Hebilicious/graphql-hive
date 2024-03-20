@@ -2,7 +2,6 @@ import { CryptoProvider } from 'packages/services/api/src/modules/shared/provide
 import { z } from 'zod';
 import type { Storage } from '@hive/api';
 import { OrganizationAccessScope, ProjectAccessScope, TargetAccessScope } from '@hive/api';
-import { handleTRPCError } from '@hive/service-common';
 import type { inferAsyncReturnType } from '@trpc/server';
 import { initTRPC } from '@trpc/server';
 
