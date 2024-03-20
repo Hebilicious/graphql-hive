@@ -22,7 +22,7 @@ export default async function githubSetupCallback(req: NextApiRequest, res: Next
         cleanId: string;
       };
     }>({
-      url: env.graphqlEndpoint,
+      url: env.graphqlPublicEndpoint,
       headers: {
         ...req.headers,
         'content-type': 'application/json',

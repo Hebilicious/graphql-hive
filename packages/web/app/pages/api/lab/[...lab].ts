@@ -7,7 +7,7 @@ import { addMocksToSchema } from '@graphql-tools/mock';
 // TODO: check if lab is working
 async function lab(req: NextApiRequest, res: NextApiResponse) {
   const logger = getLogger(req);
-  const url = env.graphqlEndpoint;
+  const url = env.graphqlPublicEndpoint;
   const labParams = req.query.lab || [];
 
   if (labParams.length < 3) {

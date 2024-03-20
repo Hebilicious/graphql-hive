@@ -12,7 +12,8 @@ import { env as backendEnv } from '@/env/backend';
  */
 export const env = {
   appBaseUrl: backendEnv.appBaseUrl,
-  graphqlEndpoint: backendEnv.graphqlEndpoint,
+  graphqlPublicEndpoint: backendEnv.graphqlPublicEndpoint,
+  graphqlPublicDomain: backendEnv.graphqlPublicDomain,
   docsUrl: backendEnv.docsUrl,
   stripePublicKey: backendEnv?.stripePublicKey,
   auth: {

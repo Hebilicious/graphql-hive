@@ -31,7 +31,7 @@ function Editor() {
   }
 
   return (
-    <GraphiQL fetcher={createGraphiQLFetcher({ url: env.graphqlEndpoint })}>
+    <GraphiQL fetcher={createGraphiQLFetcher({ url: env.graphqlPublicEndpoint })}>
       <GraphiQL.Logo>
         <HiveLogo className="size-6" />
       </GraphiQL.Logo>

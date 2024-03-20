@@ -37,8 +37,8 @@ function appInfo() {
   return {
     // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
     appName: 'GraphQL Hive',
-    apiDomain: 'http://localhost:3001',
-    websiteDomain: 'http://localhost:3000',
+    apiDomain: env.hiveServices.webApp.url,
+    websiteDomain: env.graphql.domain,
     apiBasePath: '/auth',
     websiteBasePath: '/auth',
   };

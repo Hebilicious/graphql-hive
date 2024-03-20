@@ -61,6 +61,13 @@ export function deployProxy({
         retriable: true,
       },
       {
+        name: 'auth',
+        path: '/auth',
+        service: graphql.service,
+        timeoutInSeconds: 60,
+        retriable: true,
+      },
+      {
         name: 'usage',
         path: '/usage',
         service: usage.service,
