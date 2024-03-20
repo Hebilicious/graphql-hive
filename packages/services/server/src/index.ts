@@ -105,21 +105,18 @@ export async function main() {
   server.setErrorHandler(supertokensErrorHandler());
   await server.register(cors, (_: unknown): FastifyCorsOptionsDelegateCallback => {
     return (req, callback) => {
-      const corsOptions: FastifyCorsOptions = {
-        // This is NOT recommended for production as it enables reflection exploits
-        origin: 'http://localhost:3000',
-        credentials: true,
-        methods: ['GET', 'POST'],
-        // allowedHeaders: ['Content-Type', ...supertokens.getAllCORSHeaders()],
-      };
+      if (req.originalUrl.startsWith(env.hiveServices.webApp.url)) {
+        // We need to treat requests from the web app a bit differently than others.
+        // The web app requires to define the `Access-Control-Allow-Origin` header (not *).
+        callback(null, {
+          origin: env.hiveServices.webApp.url,
+          credentials: true,
+          methods: ['GET', 'POST'],
+        });
+        return;
+      }
 
-      // // do not include CORS headers for requests from localhost
-      // if (/^localhost$/m.test(req.headers.origin)) {
-      //   corsOptions.origin = false;
-      // }
-
-      // callback expects two parameters: error and options
-      callback(null, corsOptions);
+      callback(null);
     };
   });
   await server.register(formDataPlugin);

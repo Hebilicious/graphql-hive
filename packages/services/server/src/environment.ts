@@ -23,7 +23,7 @@ const EnvironmentModel = zod.object({
   RELEASE: emptyString(zod.string().optional()),
   ENCRYPTION_SECRET: emptyString(zod.string()),
   WEB_APP_URL: zod.string().url(),
-  GRAPHQL_PUBLIC_DOMAIN: zod.string().url(),
+  GRAPHQL_PUBLIC_ORIGIN: zod.string().url(),
   RATE_LIMIT_ENDPOINT: emptyString(zod.string().url().optional()),
   SCHEMA_POLICY_ENDPOINT: emptyString(zod.string().url().optional()),
   TOKENS_ENDPOINT: zod.string().url(),
@@ -422,7 +422,7 @@ export const env = {
   hive: hiveConfig,
   graphql: {
     persistedOperationsPath: base.GRAPHQL_PERSISTED_OPERATIONS_PATH ?? null,
-    domain: base.GRAPHQL_PUBLIC_DOMAIN,
+    origin: base.GRAPHQL_PUBLIC_ORIGIN,
   },
   zendeskSupport:
     zendeskSupport.ZENDESK_SUPPORT === '1'
