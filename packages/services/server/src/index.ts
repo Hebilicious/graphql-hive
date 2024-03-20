@@ -2,12 +2,13 @@
 import * as fs from 'fs';
 import got from 'got';
 import { DocumentNode, GraphQLError, stripIgnoredCharacters } from 'graphql';
+import supertokens from 'supertokens-node';
 import {
   errorHandler as supertokensErrorHandler,
   plugin as supertokensFastifyPlugin,
 } from 'supertokens-node/framework/fastify/index.js';
 import cors from '@fastify/cors';
-import type { FastifyCorsOptions, FastifyCorsOptionsDelegateCallback } from '@fastify/cors';
+import type { FastifyCorsOptionsDelegateCallback } from '@fastify/cors';
 import 'reflect-metadata';
 import { hostname } from 'os';
 import formDataPlugin from '@fastify/formbody';
@@ -105,18 +106,25 @@ export async function main() {
   server.setErrorHandler(supertokensErrorHandler());
   await server.register(cors, (_: unknown): FastifyCorsOptionsDelegateCallback => {
     return (req, callback) => {
-      if (req.originalUrl.startsWith(env.hiveServices.webApp.url)) {
+      if (req.headers.origin?.startsWith(env.hiveServices.webApp.url)) {
         // We need to treat requests from the web app a bit differently than others.
         // The web app requires to define the `Access-Control-Allow-Origin` header (not *).
         callback(null, {
-          origin: env.hiveServices.webApp.url,
+          origin: 'http://localhost:3000',
           credentials: true,
-          methods: ['GET', 'POST'],
+          methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+          allowedHeaders: [
+            'Content-Type',
+            'graphql-client-version',
+            'graphql-client-name',
+            'x-request-id',
+            ...supertokens.getAllCORSHeaders(),
+          ],
         });
         return;
       }
 
-      callback(null);
+      callback(null, {});
     };
   });
   await server.register(formDataPlugin);

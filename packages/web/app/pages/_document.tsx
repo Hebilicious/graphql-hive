@@ -6,20 +6,14 @@ import '@/config/frontend-env';
 export default class MyDocument extends Document<{
   ids: Array<string>;
   css: string;
-  frontendEnv: (typeof import('@/config/frontend-env'))['env'];
 }> {
   static async getInitialProps(ctx: DocumentContext) {
-    if (globalThis.process.env.BUILD !== '1') {
-      await import('../environment');
-    }
-    const { env: frontendEnv } = await import('@/config/frontend-env');
     const initialProps = await Document.getInitialProps(ctx);
     const page = await ctx.renderPage();
 
     return {
       ...initialProps,
       ...page,
-      frontendEnv,
     };
   }
 
@@ -37,14 +31,7 @@ export default class MyDocument extends Document<{
           <link rel="preconnect" href="https://rsms.me/" />
           <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
           <link rel="icon" href="/just-logo.svg" type="image/svg+xml" />
-          <script
-            type="module"
-            dangerouslySetInnerHTML={{
-              __html: `globalThis.__frontend_env = ${JSON.stringify(
-                (this.props as any).frontendEnv,
-              )}`,
-            }}
-          />
+          <script src="/__ENV.js" />
         </Head>
         <body className="bg-transparent font-sans text-white">
           <Main />

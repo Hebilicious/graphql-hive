@@ -1,10 +1,33 @@
+import { configureRuntimeEnv } from 'next-runtime-env/build/configure.js';
+import { makeEnvPublic } from 'next-runtime-env/build/make-env-public.js';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
-// For the dev server we want to make sure that the correct environment variables are set :)
-// during build we don't need environment variables!
-if (globalThis.process.env.BUILD !== '1') {
-  await import('./environment');
-}
+// todo: try to dynamically generate this list based on `@/env/frontend`
+makeEnvPublic([
+  'NODE_ENV',
+  'ENVIRONMENT',
+  'APP_BASE_URL',
+  'GRAPHQL_PUBLIC_ENDPOINT',
+  'GRAPHQL_PUBLIC_ORIGIN',
+  'GA_TRACKING_ID',
+  'DOCS_URL',
+  'STRIPE_PUBLIC_KEY',
+  'RELEASE',
+  'AUTH_REQUIRE_EMAIL_VERIFICATION',
+  'GRAPHQL_PERSISTED_OPERATIONS',
+  'ZENDESK_SUPPORT',
+  'INTEGRATION_SLACK',
+  'AUTH_GITHUB',
+  'AUTH_GOOGLE',
+  'AUTH_OKTA',
+  'AUTH_OKTA_HIDDEN',
+  'AUTH_ORGANIZATION_OIDC',
+  'SENTRY',
+  'SENTRY_DSN',
+  'MEMBER_ROLES_DEADLINE',
+]);
+
+configureRuntimeEnv();
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: globalThis.process.env.ANALYZE === '1',
