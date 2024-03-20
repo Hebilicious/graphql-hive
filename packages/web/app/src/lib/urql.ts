@@ -10,7 +10,6 @@ import { networkStatusExchange } from './urql-exchanges/state';
 
 const noKey = (): null => null;
 
-// TODO: point it to GraphQL server
 const SERVER_BASE_PATH = env.graphqlPublicEndpoint;
 
 const isSome = <T>(value: T | null | undefined): value is T => value != null;

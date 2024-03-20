@@ -11,17 +11,17 @@ export class DataWrapper<TData, TVariables extends AnyVariables> extends Compone
   render() {
     const { query, children, spinnerComponent } = this.props;
     const { fetching, error, data } = query;
-    // if (fetching) {
-    //   return spinnerComponent;
-    // }
+    if (fetching) {
+      return spinnerComponent;
+    }
 
-    // if (error) {
-    //   return <QueryError error={error} />;
-    // }
+    if (error) {
+      return <QueryError error={error} />;
+    }
 
-    // if (!data) {
-    //   return spinnerComponent;
-    // }
+    if (!data) {
+      return spinnerComponent;
+    }
 
     return children({ data });
   }
