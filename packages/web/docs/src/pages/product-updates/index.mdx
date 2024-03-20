@@ -1,7 +1,11 @@
-import { getStaticProps, ProductUpdates } from '../../components/product-updates'
+import { useData } from '@theguild/components'
+import { ProductUpdates } from '../../components/product-updates'
 
-export { getStaticProps }
+export { getStaticProps } from '../../components/product-updates'
 
-export default function ProductUpdatesPage({ changelogs }) {
-  return <ProductUpdates changelogs={changelogs} />;
+export const ProductUpdatesPage = () => {
+  const { changelogs } = useData()
+  return <ProductUpdates changelogs={changelogs} />
 }
+
+<ProductUpdatesPage />
