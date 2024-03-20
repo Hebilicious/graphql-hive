@@ -124,7 +124,7 @@ export function deployGraphQL({
           EMAILS_ENDPOINT: serviceLocalEndpoint(emails.service),
           USAGE_ESTIMATOR_ENDPOINT: serviceLocalEndpoint(usageEstimator.service),
           WEB_APP_URL: `https://${environment.appDns}`,
-          GRAPHQL_PUBLIC_DOMAIN: `https://${environment.appDns}`,
+          GRAPHQL_PUBLIC_ORIGIN: `https://${environment.appDns}`,
           CDN_CF: '1',
           HIVE: '1',
           HIVE_REPORTING: '1',

@@ -25,7 +25,7 @@ const BaseSchema = zod.object({
   ENVIRONMENT: zod.string(),
   APP_BASE_URL: zod.string().url(),
   GRAPHQL_PUBLIC_ENDPOINT: zod.string().url(),
-  GRAPHQL_PUBLIC_DOMAIN: zod.string().url(),
+  GRAPHQL_PUBLIC_ORIGIN: zod.string().url(),
   SERVER_ENDPOINT: zod.string().url(),
   INTEGRATION_GITHUB_APP_NAME: emptyString(zod.string().optional()),
   GA_TRACKING_ID: emptyString(zod.string().optional()),
@@ -139,7 +139,7 @@ const config = {
   environment: base.ENVIRONMENT,
   appBaseUrl: base.APP_BASE_URL.replace(/\/$/, ''),
   graphqlPublicEndpoint: base.GRAPHQL_PUBLIC_ENDPOINT,
-  graphqlPublicDomain: base.GRAPHQL_PUBLIC_DOMAIN,
+  graphqlPublicOrigin: base.GRAPHQL_PUBLIC_ORIGIN,
   slack:
     integrationSlack.INTEGRATION_SLACK === '1'
       ? {
