@@ -1,3 +1,4 @@
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import zod from 'zod';
 import { getAllEnv } from './read';
 
@@ -150,7 +151,8 @@ function buildConfig() {
   } as const;
 }
 
-export const env = Object.keys(envValues).length > 0 ? buildConfig() : noop();
+const isNextBuilding = envValues['NEXT_PHASE'] === PHASE_PRODUCTION_BUILD;
+export const env = !isNextBuilding ? buildConfig() : noop();
 
 /**
  * Next.js is so kind and tries to pre-render our page without the environment information being available... :)
