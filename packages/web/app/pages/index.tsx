@@ -22,14 +22,18 @@ export const DefaultOrganizationQuery = graphql(`
 function Home(): ReactElement {
   const [query] = useQuery({ query: DefaultOrganizationQuery });
   const router = useRouteSelector();
-  const defaultOrganization = query.data?.myDefaultOrganization?.organization;
+  const result = query.data?.myDefaultOrganization;
 
-  useLastVisitedOrganizationWriter(defaultOrganization?.cleanId);
+  useLastVisitedOrganizationWriter(result?.organization?.cleanId);
   useEffect(() => {
-    if (defaultOrganization) {
-      void router.visitOrganization({ organizationId: defaultOrganization.cleanId });
-    }
-  }, [router, defaultOrganization]);
+    if (result === null) {
+      // No organization, redirect to create one
+      void router.push('/org/new');
+    } else if (result?.organization.cleanId) {
+      // Redirect to the organization
+      void router.visitOrganization({ organizationId: result.organization.cleanId });
+    } // else, still loading
+  }, [router, result]);
 
   if (query.error) {
     return <QueryError error={query.error} />;
