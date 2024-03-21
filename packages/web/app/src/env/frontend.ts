@@ -1,6 +1,29 @@
 import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import zod from 'zod';
+import type { AllowedEnvironmentVariables } from './frontend-public-variables';
 import { getAllEnv } from './read';
+
+type RestrictKeys<T, K> = {
+  [P in keyof T]: P extends K ? T[P] : never;
+};
+
+// Makes sure the list of available environment variables (ALLOWED_ENVIRONMENT_VARIABLES in 'frontend-public-variables.ts') is in sync with the zod schema.
+// If you add/remove an environment variable, make sure to modify it there as well
+// Example: If `NODE_ENV` is not one of the allowed values, TypeScript will detect a type error.
+//
+// {
+//   NOT_FOUND: zod.string(),
+//   ^ Type 'ZodString' is not assignable to type 'never'.
+//   NODE_ENV: zod.string(),
+// }
+//
+function protectedObject<
+  T extends {
+    [K in keyof T]: zod.ZodTypeAny;
+  },
+>(shape: RestrictKeys<T, AllowedEnvironmentVariables>) {
+  return zod.object(shape);
+}
 
 // treat an empty string `''` as `undefined`
 const emptyString = <T extends zod.ZodType>(input: T) => {
@@ -14,7 +37,7 @@ const enabledOrDisabled = emptyString(zod.union([zod.literal('1'), zod.literal('
 
 // todo: reuse backend schema
 
-const BaseSchema = zod.object({
+const BaseSchema = protectedObject({
   NODE_ENV: zod.string(),
   ENVIRONMENT: zod.string(),
   APP_BASE_URL: zod.string().url(),
@@ -33,38 +56,38 @@ const BaseSchema = zod.object({
   ZENDESK_SUPPORT: enabledOrDisabled,
 });
 
-const IntegrationSlackSchema = zod.object({
+const IntegrationSlackSchema = protectedObject({
   INTEGRATION_SLACK: enabledOrDisabled,
 });
 
-const AuthGitHubConfigSchema = zod.object({
+const AuthGitHubConfigSchema = protectedObject({
   AUTH_GITHUB: enabledOrDisabled,
 });
 
-const AuthGoogleConfigSchema = zod.object({
+const AuthGoogleConfigSchema = protectedObject({
   AUTH_GOOGLE: enabledOrDisabled,
 });
 
-const AuthOktaConfigSchema = zod.object({
+const AuthOktaConfigSchema = protectedObject({
   AUTH_OKTA: enabledOrDisabled,
   AUTH_OKTA_HIDDEN: enabledOrDisabled,
 });
 
-const AuthOktaMultiTenantSchema = zod.object({
+const AuthOktaMultiTenantSchema = protectedObject({
   AUTH_ORGANIZATION_OIDC: enabledOrDisabled,
 });
 
 const SentryConfigSchema = zod.union([
-  zod.object({
+  protectedObject({
     SENTRY: zod.union([zod.void(), zod.literal('0')]),
   }),
-  zod.object({
+  protectedObject({
     SENTRY: zod.literal('1'),
     SENTRY_DSN: zod.string(),
   }),
 ]);
 
-const MigrationsSchema = zod.object({
+const MigrationsSchema = protectedObject({
   MEMBER_ROLES_DEADLINE: emptyString(
     zod
       .date({
