@@ -39,7 +39,7 @@ function appInfo() {
     appName: 'GraphQL Hive',
     apiDomain: env.hiveServices.webApp.url,
     websiteDomain: env.graphql.origin,
-    apiBasePath: '/auth',
+    apiBasePath: '/auth-api',
     websiteBasePath: '/auth',
   };
 }

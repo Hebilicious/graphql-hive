@@ -8,7 +8,7 @@ export const appInfo = () => {
     appName: 'GraphQL Hive',
     apiDomain: graphqlPublicOrigin,
     websiteDomain: appBaseUrl,
-    apiBasePath: '/auth',
+    apiBasePath: '/auth-api',
     websiteBasePath: '/auth',
   };
 };
