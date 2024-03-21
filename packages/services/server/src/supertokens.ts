@@ -1,4 +1,4 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyBaseLogger, FastifyReply, FastifyRequest } from 'fastify';
 import { CryptoProvider } from 'packages/services/api/src/modules/shared/providers/crypto';
 import { OverrideableBuilder } from 'supertokens-js-override/lib/build/index.js';
 import supertokens from 'supertokens-node';
@@ -33,21 +33,12 @@ const SuperTokenAccessTokenModel = zod.object({
 
 export type SupertokensSession = zod.TypeOf<typeof SuperTokenAccessTokenModel>;
 
-function appInfo() {
-  return {
-    // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
-    appName: 'GraphQL Hive',
-    apiDomain: env.hiveServices.webApp.url,
-    websiteDomain: env.graphql.origin,
-    apiBasePath: '/auth-api',
-    websiteBasePath: '/auth',
-  };
-}
-
 export const backendConfig = (requirements: {
   storage: Storage;
   crypto: CryptoProvider;
+  logger: FastifyBaseLogger;
 }): TypeInput => {
+  const { logger } = requirements;
   const emailsService = createTRPCProxyClient<EmailsApi>({
     links: [httpLink({ url: `${env.hiveServices.emails?.endpoint}/trpc` })],
   });
@@ -102,13 +93,24 @@ export const backendConfig = (requirements: {
     );
   }
 
+  logger.info('SuperTokens providers: %s', providers.map(p => p.config.thirdPartyId).join(', '));
+  logger.info('SuperTokens apiDomain: %s', env.hiveServices.webApp.url);
+  logger.info('SuperTokens websiteDomain: %s', env.graphql.origin);
+
   return {
     framework: 'fastify',
     supertokens: {
       connectionURI: env.supertokens.connectionURI,
       apiKey: env.supertokens.apiKey,
     },
-    appInfo: appInfo(),
+    appInfo: {
+      // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
+      appName: 'GraphQL Hive',
+      apiDomain: env.hiveServices.webApp.url,
+      websiteDomain: env.graphql.origin,
+      apiBasePath: '/auth-api',
+      websiteBasePath: '/auth',
+    },
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         providers,
@@ -325,7 +327,11 @@ const composeSuperTokensOverrides = (
   },
 });
 
-export function initSupertokens(requirements: { storage: Storage; crypto: CryptoProvider }) {
+export function initSupertokens(requirements: {
+  storage: Storage;
+  crypto: CryptoProvider;
+  logger: FastifyBaseLogger;
+}) {
   supertokens.init(backendConfig(requirements));
 }
 

@@ -1,0 +1,24 @@
+diff --git a/lib/build/logger.js b/lib/build/logger.js
+index 520e67fc585d2fc83d881d8a1497d3fa0393188e..54828b8a5454dca142305c8d1ac2d97ca22a97a1 100644
+--- a/lib/build/logger.js
++++ b/lib/build/logger.js
+@@ -28,14 +28,11 @@ const SUPERTOKENS_DEBUG_NAMESPACE = "com.supertokens";
+     com.supertokens {t: "2022-03-18T11:15:24.608Z", message: Your message, file: "/home/supertokens-node/lib/build/supertokens.js:231:18" sdkVer: "9.2.0"} +0m
+ */
+ function logDebugMessage(message) {
+-    if (debug_1.default.enabled(SUPERTOKENS_DEBUG_NAMESPACE)) {
+-        debug_1.default(SUPERTOKENS_DEBUG_NAMESPACE)(
+-            `{t: "${new Date().toISOString()}", message: \"${message}\", file: \"${getFileLocation()}\" sdkVer: "${
+-                version_1.version
+-            }"}`
+-        );
+-        console.log();
+-    }
++    console.log(
++        `{t: "${new Date().toISOString()}", message: \"${message}\", file: \"${getFileLocation()}\" sdkVer: "${
++            version_1.version
++        }"}`
++    );
+ }
+ exports.logDebugMessage = logDebugMessage;
+ let getFileLocation = () => {

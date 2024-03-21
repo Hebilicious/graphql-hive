@@ -56,6 +56,9 @@ patchedDependencies:
   slonik@30.4.4:
     hash: jxrvl4xmdvyktjijg7yfdkb34i
     path: patches/slonik@30.4.4.patch
+  supertokens-node@15.2.1:
+    hash: 3tnhnxz7xgsdgll7pg5hp4pgua
+    path: patches/supertokens-node@15.2.1.patch
 
 importers:
 
@@ -699,7 +702,7 @@ importers:
         version: 30.4.4(patch_hash=jxrvl4xmdvyktjijg7yfdkb34i)
       supertokens-node:
         specifier: 15.2.1
-        version: 15.2.1
+        version: 15.2.1(patch_hash=3tnhnxz7xgsdgll7pg5hp4pgua)
       tslib:
         specifier: 2.6.2
         version: 2.6.2
@@ -1113,7 +1116,7 @@ importers:
         version: 0.0.4
       supertokens-node:
         specifier: 15.2.1
-        version: 15.2.1
+        version: 15.2.1(patch_hash=3tnhnxz7xgsdgll7pg5hp4pgua)
       tslib:
         specifier: 2.6.2
         version: 2.6.2
@@ -31237,7 +31240,7 @@ packages:
   /supertokens-js-override@0.0.4:
     resolution: {integrity: sha512-r0JFBjkMIdep3Lbk3JA+MpnpuOtw4RSyrlRAbrzMcxwiYco3GFWl/daimQZ5b1forOiUODpOlXbSOljP/oyurg==}
 
-  /supertokens-node@15.2.1:
+  /supertokens-node@15.2.1(patch_hash=3tnhnxz7xgsdgll7pg5hp4pgua):
     resolution: {integrity: sha512-3zJ2EsiHYJHnYwAzDQI5Alp+4x/KcwEOBgeoPN5bWglZY0Xw0AzcZvd8S3N71vjLGvab0J3XxWmHeEHqSz5dbg==}
     dependencies:
       content-type: 1.0.5
@@ -31256,6 +31259,7 @@ packages:
       - encoding
       - supports-color
     dev: true
+    patched: true
 
   /supertokens-web-js@0.8.0:
     resolution: {integrity: sha512-kkvuPbdy1I0e7nejVJAhpPJhR5h7EUHdn7Fh1YqfSjZfSJh46J3JU2qWGCgSDVZuD1hSuUKb6skF9CQnltHWrQ==}

@@ -127,8 +127,6 @@ export async function main() {
       callback(null, {});
     };
   });
-  await server.register(formDataPlugin);
-  await server.register(supertokensFastifyPlugin);
 
   const storage = await createPostgreSQLStorage(createConnectionString(env.postgres), 10);
 
@@ -399,7 +397,11 @@ export async function main() {
     initSupertokens({
       storage,
       crypto,
+      logger: server.log,
     });
+
+    await server.register(formDataPlugin);
+    await server.register(supertokensFastifyPlugin);
 
     await registerTRPC(server, {
       router: internalApiRouter,
