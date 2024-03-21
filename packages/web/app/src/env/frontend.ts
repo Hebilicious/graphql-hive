@@ -97,7 +97,8 @@ function buildConfig() {
 
   if (environmentErrors.length) {
     const fullError = environmentErrors.join('\n');
-    console.error('❌ Invalid environment variables:', fullError);
+    console.error('❌ Invalid (frontend) environment variables:', fullError);
+    throw new Error('Invalid environment variables.');
   }
 
   function extractConfig<Input, Output>(config: zod.SafeParseReturnType<Input, Output>): Output {

@@ -1,3 +1,4 @@
+import { PHASE_PRODUCTION_BUILD } from 'next/constants';
 import zod from 'zod';
 import * as Sentry from '@sentry/nextjs';
 import { getAllEnv } from './read';
@@ -111,7 +112,7 @@ function buildConfig() {
 
   if (environmentErrors.length) {
     const fullError = environmentErrors.join('\n');
-    console.error('❌ Invalid environment variables:', fullError);
+    console.error('❌ Invalid (backend) environment variables:', fullError);
     process.exit(1);
   }
 
@@ -178,7 +179,8 @@ function buildConfig() {
   return config;
 }
 
-export const env = Object.keys(processEnv).length > 0 ? buildConfig() : noop();
+const isNextBuilding = processEnv['NEXT_PHASE'] === PHASE_PRODUCTION_BUILD;
+export const env = !isNextBuilding ? buildConfig() : noop();
 
 // TODO: I don't like this here, but it seems like it makes most sense here :)
 Sentry.init({
