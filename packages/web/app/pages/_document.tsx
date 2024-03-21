@@ -1,7 +1,5 @@
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
 import 'regenerator-runtime/runtime';
-// don't remove this import ; it will break the built app ; but not the dev app :)
-import '@/config/frontend-env';
 
 export default class MyDocument extends Document<{
   ids: Array<string>;

@@ -1649,9 +1649,6 @@ importers:
       next:
         specifier: 13.5.6
         version: 13.5.6(@babel/core@7.24.0)(react-dom@18.2.0)(react@18.2.0)
-      next-runtime-env:
-        specifier: 1.7.4
-        version: 1.7.4
       nextjs-cors:
         specifier: 2.2.0
         version: 2.2.0(next@13.5.6)
@@ -26000,12 +25997,6 @@ packages:
       vfile-matter: 3.0.1
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /next-runtime-env@1.7.4:
-    resolution: {integrity: sha512-fUmvNxscQt5B1yrHoAtmQC/VFqbHATbsHgwpz9KJO0sBgjfEzITqkOK5b+YDhekiGdQoaznTGyQsp4ty5VabUA==}
-    dependencies:
-      chalk: 4.1.2
     dev: false
 
   /next-seo@6.0.0(next@13.5.6)(react-dom@18.2.0)(react@18.2.0):

@@ -1,9 +1,9 @@
-import { configureRuntimeEnv } from 'next-runtime-env/build/configure.js';
-import { makeEnvPublic } from 'next-runtime-env/build/make-env-public.js';
+import fs from 'node:fs';
+import path from 'node:path';
 import bundleAnalyzer from '@next/bundle-analyzer';
 
 // todo: try to dynamically generate this list based on `@/env/frontend`
-makeEnvPublic([
+configureRuntimeEnv([
   'NODE_ENV',
   'ENVIRONMENT',
   'APP_BASE_URL',
@@ -26,8 +26,6 @@ makeEnvPublic([
   'SENTRY_DSN',
   'MEMBER_ROLES_DEADLINE',
 ]);
-
-configureRuntimeEnv();
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: globalThis.process.env.ANALYZE === '1',
@@ -54,3 +52,29 @@ export default withBundleAnalyzer({
     },
   ],
 });
+
+//
+// Runtime environment in Next.js
+//
+
+// Writes the environment variables to public/__ENV.js file and make them accessible under `window.__ENV`
+function configureRuntimeEnv(publicEnvVars: string[]) {
+  const envObject: Record<string, unknown> = {};
+
+  for (const key in process.env) {
+    if (publicEnvVars.includes(key)) {
+      envObject[key] = process.env[key];
+    }
+  }
+
+  const base = fs.realpathSync(process.cwd());
+  const file = `${base}/public/__ENV.js`;
+  const content = `window.__ENV = ${JSON.stringify(envObject)};`;
+  const dirname = path.dirname(file);
+
+  if (!fs.existsSync(dirname)) {
+    fs.mkdirSync(dirname, { recursive: true });
+  }
+
+  fs.writeFileSync(file, content);
+}

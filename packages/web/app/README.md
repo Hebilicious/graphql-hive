@@ -9,7 +9,6 @@ The following environment variables configure the application.
 | Name                                    | Required                                   | Description                                                                                   | Example Value                                        |
 | --------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | `APP_BASE_URL`                          | **Yes**                                    | The base url of the app,                                                                      | `https://app.graphql-hive.com`                       |
-| `SERVER_ENDPOINT`                       | **Yes**                                    | The endpoint of the Hive server.                                                              | `http://127.0.0.1:4000`                              |
 | `GRAPHQL_PUBLIC_ENDPOINT`               | **Yes**                                    | The public endpoint of the Hive GraphQL API.                                                  | `http://127.0.0.1:4000/graphql`                      |
 | `GRAPHQL_PUBLIC_ORIGIN`                 | **Yes**                                    | The http address origin of the Hive GraphQL server.                                           | `http://127.0.0.1:4000/`                             |
 | `INTEGRATION_SLACK`                     | No                                         | Whether the Slack integration is enabled or disabled.                                         | `1` (enabled) or `0` (disabled)                      |
@@ -28,7 +27,7 @@ The following environment variables configure the application.
 | `DOCS_URL`                              | No                                         | The URL of the Hive Docs                                                                      | `https://the-guild.dev/graphql/hive/docs`            |
 | `NODE_ENV`                              | No                                         | The `NODE_ENV` value.                                                                         | `production`                                         |
 | `GA_TRACKING_ID`                        | No                                         | The token for Google Analytics in order to track user actions.                                | `g6aff8102efda5e1d12e`                               |
-| `GRAPHQL_PERSISTED_OPERATIONS`          | No                                         | Send persisted oepration hashes instead of documents to the                                   |
+| `GRAPHQL_PERSISTED_OPERATIONS`          | No                                         | Send persisted operation hashes instead of documents to the                                   |
 | server.                                 | `1` (enabled) or `0` (disabled)            |
 
 ## Hive Hosted Configuration

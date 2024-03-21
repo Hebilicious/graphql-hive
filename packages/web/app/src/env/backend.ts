@@ -1,8 +1,6 @@
-import { allEnv } from 'next-runtime-env';
 import zod from 'zod';
 import * as Sentry from '@sentry/nextjs';
-
-console.log('🌲 Loading environment variables...');
+import { getAllEnv } from './read';
 
 // Weird hacky way of getting the Sentry.Integrations object
 // When the nextjs config is loaded by Next CLI Sentry has `Integrations` property.
@@ -27,7 +25,6 @@ const BaseSchema = zod.object({
   APP_BASE_URL: zod.string().url(),
   GRAPHQL_PUBLIC_ENDPOINT: zod.string().url(),
   GRAPHQL_PUBLIC_ORIGIN: zod.string().url(),
-  SERVER_ENDPOINT: zod.string().url(),
   INTEGRATION_GITHUB_APP_NAME: emptyString(zod.string().optional()),
   GA_TRACKING_ID: emptyString(zod.string().optional()),
   DOCS_URL: emptyString(zod.string().url().optional()),
@@ -90,8 +87,7 @@ const MigrationsSchema = zod.object({
   ),
 });
 
-// eslint-disable-next-line no-process-env
-const processEnv = allEnv();
+const processEnv = getAllEnv();
 
 function buildConfig() {
   const configs = {
@@ -182,18 +178,18 @@ function buildConfig() {
   return config;
 }
 
-const config = buildConfig();
+export const env = Object.keys(processEnv).length > 0 ? buildConfig() : noop();
 
 // TODO: I don't like this here, but it seems like it makes most sense here :)
 Sentry.init({
   serverName: 'app',
   dist: 'app',
-  enabled: !!config.sentry,
+  enabled: !!env.sentry,
   enableTracing: false,
   tracesSampleRate: 1,
-  dsn: config.sentry?.dsn,
-  release: config.release,
-  environment: config.environment,
+  dsn: env.sentry?.dsn,
+  release: env.release,
+  environment: env.environment,
   integrations: [
     // HTTP integration is only available on the server
     new Integrations.Http({
@@ -201,11 +197,6 @@ Sentry.init({
     }),
   ],
 });
-
-/**
- * The environment as available on the !!!BACKEND!!!
- */
-export const env = config ?? noop();
 
 /**
  * Next.js is so kind and tries to pre-render our page without the environment information being available... :)
