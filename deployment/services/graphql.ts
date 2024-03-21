@@ -139,7 +139,6 @@ export function deployGraphQL({
           AUTH_GOOGLE: '1',
           AUTH_ORGANIZATION_OIDC: '1',
           AUTH_REQUIRE_EMAIL_VERIFICATION: '1',
-          DEBUG: 'com.supertokens:*',
         },
         exposesMetrics: true,
         port: 4000,
